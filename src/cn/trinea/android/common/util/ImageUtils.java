@@ -717,13 +717,13 @@ public class ImageUtils {
 	}
 
 	/**
-	 * 以最省内存的方式读取Raw资源的图片
+	 * 以最省内存的方式读取图片
 	 * 
 	 * @param context
 	 * @param resId
 	 * @return
 	 */
-	public static Bitmap getBitMapByRawResourc(Context context, int resId) {
+	public static Bitmap getBitMapByResources(Context context, int resId) {
 		BitmapFactory.Options opt = new BitmapFactory.Options();
 		opt.inPreferredConfig = Bitmap.Config.RGB_565;
 		opt.inPurgeable = true;

@@ -15,7 +15,7 @@ public class ProgressDialogUtils {
       * @param message
       */
      public static void showProgressDialog(Context context, CharSequence message) {
-            if ( mProgressDialog == null) {
+    	 if ( mProgressDialog == null) {
                  mProgressDialog = ProgressDialog. show(context, "", message); 
                  mProgressDialog.setOnKeyListener( new OnKeyListener() {
                       @Override
