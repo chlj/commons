@@ -128,6 +128,22 @@ public class TimeUtils {
 	}
 
 	/**
+	 * 将时间字符串转换为long
+	 * 
+	 * @param dateStr
+	 *            eg : 2013-04-12
+	 * @param formatStr
+	 *            eg : "yyyy-MM-dd hh:mm:ss" eg : "yyyy年MM月dd日 HH:mm:ss"
+	 * @return
+	 */
+	public static Long getLongByDateString(String dateStr, String formatStr) {
+		long millionSeconds = 0;
+		Date dt = StringToDate(dateStr, formatStr);
+		millionSeconds = dt.getTime();
+		return millionSeconds;
+	}
+
+	/**
 	 * 判断时间是否在指定的时间列表中
 	 * 
 	 * @param currentDate
@@ -148,4 +164,55 @@ public class TimeUtils {
 			return false;
 		}
 	}
+
+	/**
+	 * 得到两个时间之间的分钟差
+	 * 
+	 * @param endtime
+	 *            2014/9/3 10:34:00
+	 * @param begintime
+	 *            2014/9/3 6:22:00
+	 * @param formate
+	 *            yyyy/MM/dd hh:mm:ss
+	 * @return 异常返回 endtime
+	 */
+	public static String getTimedifference(String endtime, String begintime,
+			String formate) {
+		try {
+			long nd = 1000 * 24 * 60 * 60;// 一天的毫秒数
+			long nh = 1000 * 60 * 60;// 一小时的毫秒数
+			long nm = 1000 * 60;// 一分钟的毫秒数
+
+			Date dt1 = StringToDate(begintime, formate);
+			Date dt2 = StringToDate(endtime, formate);
+
+			long diff = dt2.getTime() - dt1.getTime();
+			long day = diff / nd;// 计算差多少天
+			long hour = diff % nd / nh;// 计算差多少小时
+			long min = diff % nd % nh / nm;// 计算差多少分钟
+
+			long result = day * 24 * 60 + hour * 60 + min;
+
+			String s = String.valueOf(result);
+			return s;
+		} catch (Exception e) {
+			return endtime;
+		}
+	}
+
+	/**
+	 * 
+	 * @param str
+	 * @return
+	 */
+	public static String getTime(String str) {
+		if (str == null) {
+			return "";
+		} else {
+			str = str.replace("0:00:00", "");
+			str = str.replace("/", "-");
+			return str;
+		}
+	}
+
 }
