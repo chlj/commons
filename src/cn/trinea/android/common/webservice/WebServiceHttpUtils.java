@@ -1,23 +1,29 @@
 package cn.trinea.android.common.webservice;
 
+import java.io.BufferedInputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.List;
 
+import android.graphics.Bitmap;
+import android.os.Environment;
 import android.util.Log;
+import cn.trinea.android.common.util.ImageUtils;
 import cn.trinea.android.common.util.ResourceUtils;
 import cn.trinea.android.common.util.StringUtils;
 
 /**
  * 模拟http post提交 与Webservice交互
+ * 
  * @author Administrator
- *
+ * 
  */
 public class WebServiceHttpUtils {
 
@@ -130,7 +136,7 @@ public class WebServiceHttpUtils {
 	 * 调用.net接口
 	 * 
 	 * @param AD
-	 *            接口挂载的根地址 eg:http://10.149.1.70:901
+	 *            接口挂载的根地址 eg:http://192.168.72.108:901
 	 * @param contextString
 	 *            传递给.net接口的 base64加密字符串
 	 * @return 接口返回的值，已经进行了base64解密
@@ -148,9 +154,10 @@ public class WebServiceHttpUtils {
 			conn.setUseCaches(false);
 			conn.setRequestMethod("POST");
 			conn.setRequestProperty("connection", "Keep-Alive");
-			// conn.setRequestProperty("content-type", MULTIPART_FORM_DATA
-			// + ";boundary=" + BOUNDARY); // 模拟器使用
-			conn.setRequestProperty("content-type", "text/html"); // 真机使用
+			conn.setRequestProperty("content-type", MULTIPART_FORM_DATA
+					+ ";boundary=" + BOUNDARY); // 模拟器使用
+			// conn.setRequestProperty("content-type", "text/html"); // 真机使用
+
 			conn.setRequestProperty("user-agent",
 					"Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1)");
 			conn.setRequestProperty("Charset", "UTF-8");
@@ -185,11 +192,11 @@ public class WebServiceHttpUtils {
 	 * 调用.net接口
 	 * 
 	 * @param AD
-	 *            接口挂载的根地址 eg:http://10.149.1.70:901
+	 *            接口挂载的根地址 eg:http://192.168.72.108:901
 	 * @param contextString
 	 *            传递给.net接口的 base64加密字符串
 	 * @param filename
-	 *            附件所在的路径 
+	 *            附件所在的路径
 	 * 
 	 * @return 接口返回的值，已经进行了base64解密
 	 */
@@ -206,9 +213,9 @@ public class WebServiceHttpUtils {
 			conn.setUseCaches(false);
 			conn.setRequestMethod("POST");
 			conn.setRequestProperty("connection", "Keep-Alive");
-//			conn.setRequestProperty("content-type", MULTIPART_FORM_DATA
-//					+ ";boundary=" + BOUNDARY); // 模拟器使用
-		    conn.setRequestProperty("content-type", "text/html"); // 真机使用
+			conn.setRequestProperty("content-type", MULTIPART_FORM_DATA
+					+ ";boundary=" + BOUNDARY); // 模拟器使用
+			// conn.setRequestProperty("content-type", "text/html"); // 真机使用
 			conn.setRequestProperty("user-agent",
 					"Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1)");
 			conn.setRequestProperty("Charset", "UTF-8");
@@ -262,5 +269,163 @@ public class WebServiceHttpUtils {
 			e.printStackTrace();
 		}
 		return sb_result.toString().trim();
+	}
+
+	/**
+	 * 获取图片，以二进制的形式
+	 * 
+	 * @param AD
+	 *            接口挂载的根地址 eg:http://192.168.72.108:901
+	 * @param contextString
+	 *            传递给.net接口的 base64加密字符串
+	 * @return 返回的是一个 Bitmap
+	 */
+	public static Bitmap ASPLowRquestGetpic(String AD, String contextString) {
+		InputStream in = null;
+		Bitmap bp = null;
+		try {
+			String BOUNDARY = "---------7d4a6d158c9";//
+
+			URL urll = new URL(AD);
+
+			String MULTIPART_FORM_DATA = "multipart/form-data";
+
+			HttpURLConnection conn = (HttpURLConnection) urll.openConnection();
+			//
+			conn.setDoOutput(true);
+			conn.setDoInput(true);
+			conn.setUseCaches(false);
+			conn.setRequestMethod("POST");
+			conn.setRequestProperty("connection", "Keep-Alive");
+
+			conn.setRequestProperty("content-type", MULTIPART_FORM_DATA
+					+ ";boundary=" + BOUNDARY); // 模拟器使用
+
+			// conn.setRequestProperty("content-type", "text/html"); // 真机使用
+
+			conn.setRequestProperty("user-agent",
+					"Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1)");
+			conn.setRequestProperty("Charset", "UTF-8");
+
+			OutputStream out = new DataOutputStream(conn.getOutputStream());
+			StringBuilder sb = new StringBuilder();
+
+			sb.append("\r\n--" + BOUNDARY + "\r\n");
+			sb.append("Content-Disposition: form-data;name=\"Input\"\r\n\r\n");
+			sb.append(contextString);
+			sb.append("\r\n");
+
+			byte[] data = sb.toString().getBytes("UTF-8");
+			out.write(data);
+
+			byte[] end_data = ("--" + BOUNDARY + "--\r\n").getBytes();// 结束掉
+			out.write(end_data);
+			out.flush();
+			out.close();
+
+			in = conn.getInputStream(); // 获取到数据
+			String string = ResourceUtils.getStringFromInputStream(in);
+			bp = ImageUtils.getBitmapByBase64String(string);
+			// ------------------------------------------------
+			in.close();
+
+			conn.disconnect();
+		} catch (Exception e) {
+			Log.i("xx", e.toString());
+			e.printStackTrace();
+		}
+		return bp;
+
+	}
+
+	/**
+	 * 获取图片，以流的形式
+	 * 
+	 * @param AD
+	 *            接口挂载的根地址 eg:http://192.168.72.108:901 
+	 * @param contextString
+	 *            传递给.net接口的 base64加密字符串
+	 * @param directory
+	 *            目录文件夹 test
+	 * @param filename
+	 *            文件名称 123.jpg
+	 * @return 返回 图片在sdk中的路径
+	 */
+	public static String ASPLowRquestGetpic(String AD, String contextString,
+			String directory, String filename) {
+		String result = "";
+		try {
+			String BOUNDARY = "---------7d4a6d158c9";//
+
+			URL urll = new URL(AD);
+
+			String MULTIPART_FORM_DATA = "multipart/form-data";
+
+			HttpURLConnection conn = (HttpURLConnection) urll.openConnection();
+			//
+			conn.setDoOutput(true);
+			conn.setDoInput(true);
+			conn.setUseCaches(false);
+			conn.setRequestMethod("POST");
+			conn.setRequestProperty("connection", "Keep-Alive");
+
+			conn.setRequestProperty("content-type", MULTIPART_FORM_DATA
+					+ ";boundary=" + BOUNDARY); // 模拟器使用
+
+			// conn.setRequestProperty("content-type", "text/html"); // 真机使用
+
+			conn.setRequestProperty("user-agent",
+					"Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1)");
+			conn.setRequestProperty("Charset", "UTF-8");
+
+			OutputStream out = new DataOutputStream(conn.getOutputStream());
+			StringBuilder sb = new StringBuilder();
+
+			sb.append("\r\n--" + BOUNDARY + "\r\n");
+			sb.append("Content-Disposition: form-data;name=\"Input\"\r\n\r\n");
+			sb.append(contextString);
+			sb.append("\r\n");
+
+			byte[] data = sb.toString().getBytes("UTF-8");
+			out.write(data);
+
+			byte[] end_data = ("--" + BOUNDARY + "--\r\n").getBytes();// 结束掉
+			out.write(end_data);
+			out.flush();
+			out.close();
+
+			InputStream in = conn.getInputStream(); // 获取到数据
+
+			byte[] buf = new byte[1024];
+			int size = 0;
+			BufferedInputStream bis = new BufferedInputStream(in);
+			File dir = new File(Environment.getExternalStorageDirectory()
+					.getAbsolutePath() + File.separator + directory);
+			if (!dir.exists())
+				dir.mkdir();
+			FileOutputStream fos = new FileOutputStream(new File(dir, filename));
+			while ((size = bis.read(buf)) != -1) {
+				fos.write(buf, 0, size);
+			}
+			fos.close();
+			bis.close();
+
+			result = Environment.getExternalStorageDirectory()
+					.getAbsolutePath()
+					+ File.separator
+					+ directory
+					+ "/"
+					+ filename;
+
+			// ------------------------------------------------
+			in.close();
+
+			conn.disconnect();
+		} catch (Exception e) {
+			Log.i("xx", e.toString());
+			e.printStackTrace();
+		}
+		return result;
+
 	}
 }

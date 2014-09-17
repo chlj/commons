@@ -1,6 +1,7 @@
 package cn.trinea.android.common.util;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -261,6 +262,25 @@ public class ResourceUtils {
 
 			return null;
 		}
+	}
+	
+	/**
+	 * ½«Bitmap×ª»»ÎªInputStream
+	 * @param bp
+	 * @return
+	 */
+	public static InputStream getInputStreamByBitmap(Bitmap bp){
+		InputStream is=null;
+		if(bp!=null){
+			try{
+				ByteArrayOutputStream baos = new ByteArrayOutputStream();
+				bp.compress(Bitmap.CompressFormat.PNG, 100, baos);
+				is = new ByteArrayInputStream(baos.toByteArray());
+			}catch (Exception e) {
+				
+			}
+		}
+		return is;
 	}
 
 }
