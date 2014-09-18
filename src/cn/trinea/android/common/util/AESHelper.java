@@ -54,6 +54,14 @@ public class AESHelper {
 	}
 
 	/** 加密(结果为16进制字符串) **/
+	/**
+	 * 
+	 * @param content
+	 *  需要加密的内容
+	 * @param password
+	 * 密钥对
+	 * @return
+	 */
 	public static String encrypt(String content, String password) {
 		byte[] data = null;
 		try {
@@ -81,6 +89,14 @@ public class AESHelper {
 	}
 
 	/** 解密16进制的字符串为字符串 **/
+	/**
+	 * 
+	 * @param content
+	 * 需要解密的内容
+	 * @param password
+	 *  密钥对
+	 * @return
+	 */
 	public static String decrypt(String content, String password) {
 		byte[] data = null;
 		try {

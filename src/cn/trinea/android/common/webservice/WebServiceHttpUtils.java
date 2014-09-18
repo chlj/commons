@@ -396,8 +396,8 @@ public class WebServiceHttpUtils {
 
 			InputStream in = conn.getInputStream(); // 获取到数据
 
-			byte[] buf = new byte[1024];
-			int size = 0;
+			byte[] buf = new byte[1024*4];
+			int size = -1;
 			BufferedInputStream bis = new BufferedInputStream(in);
 			File dir = new File(Environment.getExternalStorageDirectory()
 					.getAbsolutePath() + File.separator + directory);
