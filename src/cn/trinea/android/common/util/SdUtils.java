@@ -1,12 +1,14 @@
 package cn.trinea.android.common.util;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
 import android.os.Environment;
+import android.util.Log;
 
 /**
  * 对sd卡进行操作
@@ -111,6 +113,36 @@ public class SdUtils {
 				e.printStackTrace();
 			}
 		}
+		return bool;
+	}
+	
+	
+	/**
+	 * 将指定路径的文件导出到sd卡中去
+	 * <pre>
+	 *  eg: SdUtils.pathSaveSD("/data/data/datebases/test.db", "123.db", "crash_wcp");
+	 * </pre>
+	 * @param sourcePath
+	 * @param fileName
+	 * @param rootdir
+	 * @return
+	 */
+	public static Boolean pathSaveSD(String sourcePath, String fileName, String rootdir){
+		Boolean bool = false;
+		FileInputStream fis; 
+		try {
+			 fis = new FileInputStream(sourcePath);
+			if(InputStreamSaveSD(fis, fileName, rootdir)){
+				bool = true;
+			}
+			else{
+				bool = false;
+			}
+			fis.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	
 		return bool;
 	}
 }

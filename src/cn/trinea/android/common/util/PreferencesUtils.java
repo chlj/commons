@@ -11,9 +11,10 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 /**
- *  eg: PreferencesUtils.putString("one",MainActivity.this,"name","abc");
+ * eg: PreferencesUtils.putString("one",MainActivity.this,"name","abc");
+ * 
  * @author Administrator
- *
+ * 
  */
 public class PreferencesUtils {
 	/**
@@ -265,6 +266,19 @@ public class PreferencesUtils {
 	}
 
 	/**
+	 * 移除指定的key
+	 * 
+	 * @param key
+	 * @param xmlName
+	 * @param context
+	 */
+	public static void removeKey(String key, String xmlName, Context context) {
+		SharedPreferences preferences = context.getSharedPreferences(xmlName,
+				Context.MODE_PRIVATE);
+		preferences.edit().remove(key).commit();
+	}
+
+	/**
 	 * 删除指定的PreferencesXML文件
 	 * 
 	 * @param context
@@ -275,9 +289,9 @@ public class PreferencesUtils {
 				Context.MODE_PRIVATE);
 		preferences.edit().clear().commit(); // 清理掉所有数据,防止缓存
 		// 暴力删除文件
-		File file = new File("/data/data/"
-				+ context.getPackageName().toString() + "/shared_prefs",
-				xmlName + ".xml");
+		;
+		File file = new File(context.getFilesDir().getParent().toString()
+				+ "/shared_prefs", xmlName + ".xml");
 		if (file.exists()) {
 			file.delete();
 		}

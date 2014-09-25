@@ -449,7 +449,7 @@ public class PackageUtils {
     }
 
     /**
-     * get app version code
+     * 得到版本号 code
      * 
      * @param context
      * @return
@@ -471,6 +471,42 @@ public class PackageUtils {
         }
         return -1;
     }
+    
+    /**
+     * 得到版本名称
+     * @param context
+     * @return
+     */
+    public static String getAppVersionName(Context context) {
+        if (context != null) {
+            PackageManager pm = context.getPackageManager();
+            if (pm != null) {
+                PackageInfo pi;
+                try {
+                    pi = pm.getPackageInfo(context.getPackageName(), 0);
+                    if (pi != null) {
+                        return pi.versionName;
+                    }
+                } catch (NameNotFoundException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return null;
+    }
+    
+    /**
+     * 得到应用包名
+     * @param context
+     * @return
+     */
+    public static String getAppPackageName(Context context) {
+        if (context != null) {
+          return context.getPackageName();
+        }
+        return null;
+    }
+    
 
     /**
      * get system install location<br/>
