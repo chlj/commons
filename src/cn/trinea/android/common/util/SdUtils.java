@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 
 import android.os.Environment;
 import android.util.Log;
@@ -145,4 +146,53 @@ public class SdUtils {
 	
 		return bool;
 	}
+	
+	
+	/**
+	 * 将SD卡中的文件,还原到data中的文件中去
+	 * 
+	 * @param sourcePath
+	 *            要还原的数据源 /mnt/sdcard/baoyue8/zhx_bak
+	 * @param DATABASE_PATH
+	 *            数据库路径 /data/data/com.example.android_jqss/databases
+	 * @param DATABASE_NAME
+	 *            数据库名称 zhx
+	 * @return
+	 */
+	public static Boolean pathSaveToDatabases(String sourcePath,
+			String DATABASE_PATH, String DATABASE_NAME) {
+		Boolean bool = false;
+
+		File dir = new File(DATABASE_PATH);
+		if (!dir.exists() || !dir.isDirectory()) { // 如果路径不存在 或者 该路径不是目录
+			dir.mkdir(); // 创建路径
+		}
+		File file = new File(DATABASE_PATH + "/" + DATABASE_NAME);
+		if (file.exists()) {
+			file.delete();
+		}
+		FileInputStream fis;
+		try {
+			fis = new FileInputStream(sourcePath);
+			try {
+				OutputStream myOutput = new FileOutputStream(DATABASE_PATH
+						+ "/" + DATABASE_NAME);
+				byte[] buffer = new byte[1024];
+				int length;
+				while ((length = fis.read(buffer)) > 0) {
+					myOutput.write(buffer, 0, length);
+				}
+				myOutput.close();
+				fis.close();
+				bool = true;
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
+		} catch (FileNotFoundException e1) {
+			e1.printStackTrace();
+		}
+		return bool;
+	}
+	
 }
