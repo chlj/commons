@@ -75,6 +75,44 @@ public class SdUtils {
 	}
 
 	/**
+     * 将 字符串保存到 手机内存卡中,是否追加
+	 * 
+	 * <pre>
+	 * eg: SdUtils.InputStreamSaveSD("将 字符串保存到 手机内存卡中试", "123.txt", "NN_Log");
+	 * </pre>
+	 * @param str
+	 * @param fileName
+	 * @param rootdir
+	 * @param falg
+	 *  true 表示追加,false表示不追加
+	 * @return
+	 */
+	public static Boolean StringSaveSDAppend(String str, String fileName,
+			String rootdir,Boolean falg) {
+		// 判断SD卡是否存在，并且是否具有读写权限
+		Boolean bool = false;
+		if (IsExist()) {
+			try {
+				File dir = new File(Environment.getExternalStorageDirectory()
+						.getAbsolutePath() + File.separator + rootdir);
+				if (!dir.exists())
+					dir.mkdir();
+				FileOutputStream fos = new FileOutputStream(new File(dir,
+						fileName),falg);
+				fos.write(str.toString().getBytes());
+				fos.write("\r\n".getBytes());
+				fos.close();
+				bool = true;
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		return bool;
+	}
+	
+	/**
 	 * 将InputStream所对应的内容写入到sd卡中去
 	 * 
 	 * <pre>
