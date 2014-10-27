@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import android.graphics.Bitmap;
 import android.os.Environment;
 import android.util.Log;
 
@@ -39,7 +40,7 @@ public class SdUtils {
 	 * 将 字符串保存到 手机内存卡中
 	 * 
 	 * <pre>
-	 * eg: SdUtils.InputStreamSaveSD("将 字符串保存到 手机内存卡中试", "123.txt", "NN_Log");
+	 * eg: SdUtils.InputStreamSaveSD(&quot;将 字符串保存到 手机内存卡中试&quot;, &quot;123.txt&quot;, &quot;NN_Log&quot;);
 	 * </pre>
 	 * 
 	 * @param str
@@ -75,20 +76,21 @@ public class SdUtils {
 	}
 
 	/**
-     * 将 字符串保存到 手机内存卡中,是否追加
+	 * 将 字符串保存到 手机内存卡中,是否追加
 	 * 
 	 * <pre>
-	 * eg: SdUtils.InputStreamSaveSD("将 字符串保存到 手机内存卡中试", "123.txt", "NN_Log");
+	 * eg: SdUtils.InputStreamSaveSD(&quot;将 字符串保存到 手机内存卡中试&quot;, &quot;123.txt&quot;, &quot;NN_Log&quot;);
 	 * </pre>
+	 * 
 	 * @param str
 	 * @param fileName
 	 * @param rootdir
 	 * @param falg
-	 *  true 表示追加,false表示不追加
+	 *            true 表示追加,false表示不追加
 	 * @return
 	 */
 	public static Boolean StringSaveSDAppend(String str, String fileName,
-			String rootdir,Boolean falg) {
+			String rootdir, Boolean falg) {
 		// 判断SD卡是否存在，并且是否具有读写权限
 		Boolean bool = false;
 		if (IsExist()) {
@@ -98,7 +100,7 @@ public class SdUtils {
 				if (!dir.exists())
 					dir.mkdir();
 				FileOutputStream fos = new FileOutputStream(new File(dir,
-						fileName),falg);
+						fileName), falg);
 				fos.write(str.toString().getBytes());
 				fos.write("\r\n".getBytes());
 				fos.close();
@@ -111,12 +113,12 @@ public class SdUtils {
 		}
 		return bool;
 	}
-	
+
 	/**
 	 * 将InputStream所对应的内容写入到sd卡中去
 	 * 
 	 * <pre>
-	 * eg: SdUtils.InputStreamSaveSD(is, "123.docx", "crash_wcp");
+	 * eg: SdUtils.InputStreamSaveSD(is, &quot;123.docx&quot;, &quot;crash_wcp&quot;);
 	 * </pre>
 	 * 
 	 * @param in
@@ -154,38 +156,38 @@ public class SdUtils {
 		}
 		return bool;
 	}
-	
-	
+
 	/**
 	 * 将指定路径的文件导出到sd卡中去
+	 * 
 	 * <pre>
-	 *  eg: SdUtils.pathSaveSD("/data/data/datebases/test.db", "123.db", "crash_wcp");
+	 * eg: SdUtils.pathSaveSD(&quot;/data/data/datebases/test.db&quot;, &quot;123.db&quot;, &quot;crash_wcp&quot;);
 	 * </pre>
+	 * 
 	 * @param sourcePath
 	 * @param fileName
 	 * @param rootdir
 	 * @return
 	 */
-	public static Boolean pathSaveSD(String sourcePath, String fileName, String rootdir){
+	public static Boolean pathSaveSD(String sourcePath, String fileName,
+			String rootdir) {
 		Boolean bool = false;
-		FileInputStream fis; 
+		FileInputStream fis;
 		try {
-			 fis = new FileInputStream(sourcePath);
-			if(InputStreamSaveSD(fis, fileName, rootdir)){
+			fis = new FileInputStream(sourcePath);
+			if (InputStreamSaveSD(fis, fileName, rootdir)) {
 				bool = true;
-			}
-			else{
+			} else {
 				bool = false;
 			}
 			fis.close();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-	
+
 		return bool;
 	}
-	
-	
+
 	/**
 	 * 将SD卡中的文件,还原到data中的文件中去
 	 * 
@@ -232,5 +234,39 @@ public class SdUtils {
 		}
 		return bool;
 	}
-	
+
+	/***
+	 * 将BitMap转换为图片保存到SD卡中去
+	 * 
+	 * @param bmp
+	 * @param fileName
+	 * @param rootdir
+	 */
+	public Boolean saveBitmap(Bitmap bmp, String fileName, String rootdir) {
+
+		Boolean bool = false;
+		if (IsExist()) {
+			if (bmp != null) {
+				File dir = new File(Environment.getExternalStorageDirectory()
+						.getAbsolutePath() + File.separator + rootdir);
+				if (!dir.exists())
+					dir.mkdir();
+				FileOutputStream out = null;
+				try {
+					out = new FileOutputStream(new File(dir, fileName));
+					bmp.compress(Bitmap.CompressFormat.JPEG, 100, out);
+					out.flush();
+					out.close();
+					bool = true;
+
+				} catch (FileNotFoundException e) {
+
+				} catch (IOException e) {
+
+				}
+			}
+		}
+		return bool;
+	}
+
 }

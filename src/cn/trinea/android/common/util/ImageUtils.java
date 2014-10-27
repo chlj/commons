@@ -773,7 +773,7 @@ public class ImageUtils {
 	 *            高度
 	 * @return
 	 */
-	public static Bitmap getBitmapByPath(String path, int w, int h) {
+	public static Bitmap getBitMapByPath(String path, int w, int h) {
 		BitmapFactory.Options opts = new BitmapFactory.Options();
 		// 设置为ture只获取图片大小
 		opts.inJustDecodeBounds = true;
