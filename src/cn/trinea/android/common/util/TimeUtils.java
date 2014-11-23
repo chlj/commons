@@ -205,12 +205,13 @@ public class TimeUtils {
 	 * @param str
 	 * @return
 	 */
-	public static String getTime(String str) {
+	public static String getTimeChange(String str) {
 		if (str == null) {
 			return "";
 		} else {
 			str = str.replace("0:00:00", "");
-			str = str.replace("/", "-");
+			str = str.replace("00:00:00", "-");
+			str = str.replace("/", "-").toString().trim();
 			return str;
 		}
 	}
