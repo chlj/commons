@@ -6,6 +6,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 /**
  * <ul>
@@ -210,10 +211,64 @@ public class TimeUtils {
 			return "";
 		} else {
 			str = str.replace("0:00:00", "");
-			str = str.replace("00:00:00", "-");
+			str = str.replace("00:00:00", "");
 			str = str.replace("/", "-").toString().trim();
 			return str;
 		}
+	}
+
+	public static final int SECONDS_IN_DAY = 60 * 60 * 24;
+	public static final long MILLIS_IN_DAY = 1000L * SECONDS_IN_DAY;
+
+	public static boolean isSameDayOfMillis(final long ms1, final long ms2) {
+
+		final long interval = ms1 - ms2;
+		return interval < MILLIS_IN_DAY && interval > -1L * MILLIS_IN_DAY
+				&& toDay(ms1) == toDay(ms2);
+	}
+
+	private static long toDay(long millis) {
+		return (millis + TimeZone.getDefault().getOffset(millis))
+				/ MILLIS_IN_DAY;
+	}
+
+	/**
+	 * 判断当前时间字符串是不是今天
+	 * 
+	 * @param time
+	 *            时间字符串
+	 * @param formatStr
+	 *            yyyy/MM/dd hh:mm:ss
+	 * @return 异常返回false
+	 */
+	public static Boolean isToday(String time, String formatStr) {
+
+		if (time == null || "".equals(time)) {
+			return false;
+		}
+		final SimpleDateFormat format = new java.text.SimpleDateFormat(
+				formatStr);
+
+		long lms2 = TimeUtils.getCurrentTimeInLong();
+
+		Date date = null;
+
+		try {
+			date = format.parse(time);
+
+			long lms1 = date.getTime();
+
+			if (isSameDayOfMillis(lms1, lms2)) {
+				return true;
+			} else {
+				return false;
+			}
+
+		} catch (java.text.ParseException e) {
+			// TODO Auto-generated catch block
+			return false;
+		}
+
 	}
 
 }
