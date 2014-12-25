@@ -154,6 +154,7 @@ public class WebServiceHttpUtils {
 			conn.setUseCaches(false);
 			conn.setRequestMethod("POST");
 			conn.setRequestProperty("connection", "Keep-Alive");
+			System. setProperty("http.keepAlive", "false");  //多图片下载 
 			conn.setRequestProperty("content-type", MULTIPART_FORM_DATA
 					+ ";boundary=" + BOUNDARY); // 模拟器使用
 			// conn.setRequestProperty("content-type", "text/html"); // 真机使用
@@ -213,6 +214,7 @@ public class WebServiceHttpUtils {
 			conn.setUseCaches(false);
 			conn.setRequestMethod("POST");
 			conn.setRequestProperty("connection", "Keep-Alive");
+			System. setProperty("http.keepAlive", "false");  //多图片下载 
 			conn.setRequestProperty("content-type", MULTIPART_FORM_DATA
 					+ ";boundary=" + BOUNDARY); // 模拟器使用
 			// conn.setRequestProperty("content-type", "text/html"); // 真机使用
@@ -297,7 +299,7 @@ public class WebServiceHttpUtils {
 			conn.setUseCaches(false);
 			conn.setRequestMethod("POST");
 			conn.setRequestProperty("connection", "Keep-Alive");
-
+			System. setProperty("http.keepAlive", "false");  //多图片下载 
 			conn.setRequestProperty("content-type", MULTIPART_FORM_DATA
 					+ ";boundary=" + BOUNDARY); // 模拟器使用
 
@@ -368,7 +370,7 @@ public class WebServiceHttpUtils {
 			conn.setUseCaches(false);
 			conn.setRequestMethod("POST");
 			conn.setRequestProperty("connection", "Keep-Alive");
-
+			System. setProperty("http.keepAlive", "false");  //多图片下载 
 			conn.setRequestProperty("content-type", MULTIPART_FORM_DATA
 					+ ";boundary=" + BOUNDARY); // 模拟器使用
 
