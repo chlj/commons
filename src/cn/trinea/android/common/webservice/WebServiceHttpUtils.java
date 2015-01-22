@@ -13,6 +13,7 @@ import java.net.URL;
 import java.util.List;
 
 import android.graphics.Bitmap;
+import android.os.Build;
 import android.os.Environment;
 import android.util.Log;
 import cn.trinea.android.common.util.ImageUtils;
@@ -358,47 +359,51 @@ public class WebServiceHttpUtils {
 		String result = "";
 		try {
 			String BOUNDARY = "---------7d4a6d158c9";//
-
 			URL urll = new URL(AD);
-
 			String MULTIPART_FORM_DATA = "multipart/form-data";
 
 			HttpURLConnection conn = (HttpURLConnection) urll.openConnection();
-			//
+
+			if (Build.VERSION.SDK != null && Build.VERSION.SDK_INT > 13) {
+				// 防止 java.io.EOFException
+				conn.setRequestProperty("Connection", "close"); // sdk3.2之后用这个
+			} else {
+				conn.setRequestProperty("http.keepAlive", "false"); // sdk2.2之前用这个
+			}
+
 			conn.setDoOutput(true);
 			conn.setDoInput(true);
 			conn.setUseCaches(false);
 			conn.setRequestMethod("POST");
-			conn.setRequestProperty("connection", "Keep-Alive");
-			System. setProperty("http.keepAlive", "false");  //多图片下载 
+
+			// conn.setRequestProperty("connection", "Keep-Alive"); //
+			conn.setRequestProperty("user-agent",
+					"Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1)");
+			conn.setRequestProperty("Charset", "UTF-8");
 			conn.setRequestProperty("content-type", MULTIPART_FORM_DATA
 					+ ";boundary=" + BOUNDARY); // 模拟器使用
 
 			// conn.setRequestProperty("content-type", "text/html"); // 真机使用
 
-			conn.setRequestProperty("user-agent",
-					"Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1)");
-			conn.setRequestProperty("Charset", "UTF-8");
-
 			OutputStream out = new DataOutputStream(conn.getOutputStream());
+
 			StringBuilder sb = new StringBuilder();
 
 			sb.append("\r\n--" + BOUNDARY + "\r\n");
 			sb.append("Content-Disposition: form-data;name=\"Input\"\r\n\r\n");
 			sb.append(contextString);
 			sb.append("\r\n");
-
 			byte[] data = sb.toString().getBytes("UTF-8");
 			out.write(data);
-
 			byte[] end_data = ("--" + BOUNDARY + "--\r\n").getBytes();// 结束掉
 			out.write(end_data);
 			out.flush();
 			out.close();
 
 			InputStream in = conn.getInputStream(); // 获取到数据
+													// java.io.EOFException
 
-			byte[] buf = new byte[1024*4];
+			byte[] buf = new byte[1024 * 1024];
 			int size = -1;
 			BufferedInputStream bis = new BufferedInputStream(in);
 			File dir = new File(Environment.getExternalStorageDirectory()
@@ -406,27 +411,31 @@ public class WebServiceHttpUtils {
 			if (!dir.exists())
 				dir.mkdir();
 			FileOutputStream fos = new FileOutputStream(new File(dir, filename));
+
 			while ((size = bis.read(buf)) != -1) {
 				fos.write(buf, 0, size);
 			}
-			fos.close();
-			bis.close();
 
+			fos.flush();
+			if (fos != null) {
+				fos.close();
+			}
+			bis.close();
 			result = Environment.getExternalStorageDirectory()
 					.getAbsolutePath()
 					+ File.separator
 					+ directory
 					+ "/"
 					+ filename;
-
-			// ------------------------------------------------
 			in.close();
 
 			conn.disconnect();
 		} catch (Exception e) {
-			Log.i("xx", e.toString());
+
+			Log.i("xx", "error6=" + e.toString());
 			e.printStackTrace();
 		}
+
 		return result;
 
 	}
